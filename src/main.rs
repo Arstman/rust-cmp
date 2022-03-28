@@ -1,6 +1,4 @@
 fn main() {
-    println!("Hello, world!");
-
     let test = "age >= 45".to_string();
 
     let mut result: Vec<DFState> = Vec::new();
@@ -13,61 +11,25 @@ fn main() {
     for c in test.chars() {
         match char_type(c) {
             TokenType::Identifier => {
-                if dfstate.state == State::Initial || dfstate.state == State::Id {
-                    dfstate.text.push(c);
-                } else {
-                     result.push(dfstate.clone());
-                     dfstate.text = String::new();
-                     dfstate.text.push(c);
-                }
-
-                    dfstate.state = State::Id;
-
+                let current = State::Id;
+                auto_state(c, current, &mut dfstate, &mut result)
             }
             TokenType::IntLiteral => {
-                if dfstate.state == State::Initial || dfstate.state == State::Int {
-                    dfstate.text.push(c);
-                } else {
-                     result.push(dfstate.clone());
-                     dfstate.text = String::new();
-                     dfstate.text.push(c);
-                }
-
-                    dfstate.state = State::Int;
+                let current = State::Int;
+                auto_state(c, current, &mut dfstate, &mut result)
             }
             TokenType::Punctuation => {
-                if dfstate.state == State::Initial || dfstate.state == State::Pct {
-                    dfstate.text.push(c);
-                } else {
-                     result.push(dfstate.clone());
-                     dfstate.text = String::new();
-                     dfstate.text.push(c);
-                }
-
-                    dfstate.state = State::Pct;
+                let current = State::Pct;
+                auto_state(c, current, &mut dfstate, &mut result)
             }
             TokenType::WhiteSpace => {
-                if dfstate.state == State::Initial || dfstate.state == State::WhiteSpace {
-                    dfstate.text.push(c);
-                } else {
-                     result.push(dfstate.clone());
-                     dfstate.text = String::new();
-                     dfstate.text.push(c);
-                }
+                let current = State::WhiteSpace;
 
-                    dfstate.state = State::WhiteSpace;
-
+                auto_state(c, current, &mut dfstate, &mut result)
             }
             TokenType::UnDefinte => {
-              if dfstate.state == State::Initial || dfstate.state == State::UnDefinte {
-                    dfstate.text.push(c);
-                } else {
-                     result.push(dfstate.clone());
-                     dfstate.text = String::new();
-                     dfstate.text.push(c);
-                }
-
-                    dfstate.state = State::UnDefinte;
+                let current = State::UnDefinte;
+                auto_state(c, current, &mut dfstate, &mut result)
             }
         }
     }
@@ -77,7 +39,7 @@ fn main() {
     println!("{:?}", result);
 }
 
-pub fn auto_state(c: char, current: State, dfstate: &mut DFState, stack: &mut Vec<DFState> ) {
+pub fn auto_state(c: char, current: State, dfstate: &mut DFState, stack: &mut Vec<DFState>) {
     if dfstate.state != current && dfstate.state != State::Initial {
         stack.push(dfstate.clone());
         dfstate.text = String::new();
