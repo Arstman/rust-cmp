@@ -1,5 +1,5 @@
 fn main() {
-    let test = "if age >= 45".to_string();
+    let test = "if age1 >= 45".to_string();
 
     let mut result: Vec<DFState> = Vec::new();
 
@@ -40,10 +40,16 @@ fn main() {
 }
 
 pub fn auto_state(c: char, current: State, dfstate: &mut DFState, stack: &mut Vec<DFState>) {
+    if dfstate.state == State::Id && current == State::Int {
+        dfstate.text.push(c);
+        return;
+    }
     if dfstate.state != current && dfstate.state != State::Initial {
         if dfstate.state == State::Id && check_keywords(&dfstate.text) {
             dfstate.state = State::KeyWord;
         }
+
+        
         stack.push(dfstate.clone());
         dfstate.text = String::new();
     }
